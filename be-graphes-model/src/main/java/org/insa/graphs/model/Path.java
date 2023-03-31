@@ -205,7 +205,7 @@ public class Path {
         if ((this.arcs == null) || ((this.arcs.size() == 1))){
             return true;
         }
-        for (int i = 0; i<this.arcs.size(); i++){
+        for (int i = 0; i<this.arcs.size()-1; i++){
             if (this.arcs.get(i).getDestination()!=this.arcs.get(i+1).getOrigin()){
                 return false;
             }
@@ -223,7 +223,7 @@ public class Path {
      * @deprecated Need to be implemented.
      */
     public float getLength() {
-        int l = 0;
+        float l = 0;
         for (Arc ark : this.arcs){
             l += ark.getLength();
         }
@@ -242,7 +242,7 @@ public class Path {
      * @deprecated Need to be implemented.
      */
     public double getTravelTime(double speed) {
-        int t = 0;
+        double t = 0;
         for (Arc ark : this.arcs){
             t += ark.getTravelTime(speed);
         }
@@ -259,7 +259,7 @@ public class Path {
      * @deprecated Need to be implemented.
      */
     public double getMinimumTravelTime() {
-        int minT = 0;
+        double minT = 0;
         for(Arc ark : this.arcs){
             minT += ark.getMinimumTravelTime();
         }
