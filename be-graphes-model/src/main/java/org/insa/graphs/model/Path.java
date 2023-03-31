@@ -54,8 +54,9 @@ public class Path {
      * @deprecated Need to be implemented.
      */
     public static Path createShortestPathFromNodes(Graph graph, List<Node> nodes)
-            throws IllegalArgumentException {
+        throws IllegalArgumentException {
         List<Arc> arcs = new ArrayList<Arc>();
+
         // TODO:
         return new Path(graph, arcs);
     }
@@ -189,7 +190,7 @@ public class Path {
      * 
      * A path is valid if any of the following is true:
      * <ul>
-     * <li>it is empty;</li>
+     * <li>it is empty;</li> OK
      * <li>it contains a single node (without arcs);</li>
      * <li>the first arc has for origin the origin of the path and, for two
      * consecutive arcs, the destination of the first one is the origin of the
@@ -201,8 +202,17 @@ public class Path {
      * @deprecated Need to be implemented.
      */
     public boolean isValid() {
+        if ((this.arcs == null) || ((this.arcs.size() == 1))){
+            return true;
+        }
+        for (int i = 0; i<this.arcs.size(); i++){
+            if (this.arcs.get(i).getDestination()!=this.arcs.get(i+1).getOrigin()){
+                return false;
+            }
+        }
+
         // TODO:
-        return false;
+        return true;
     }
 
     /**
@@ -213,8 +223,12 @@ public class Path {
      * @deprecated Need to be implemented.
      */
     public float getLength() {
+        int l = 0;
+        for (Arc ark : this.arcs){
+            l += ark.getLength();
+        }
         // TODO:
-        return 0;
+        return l;
     }
 
     /**
@@ -228,8 +242,12 @@ public class Path {
      * @deprecated Need to be implemented.
      */
     public double getTravelTime(double speed) {
+        int t = 0;
+        for (Arc ark : this.arcs){
+            t += ark.getTravelTime(speed);
+        }
         // TODO:
-        return 0;
+        return t;
     }
 
     /**
@@ -241,8 +259,12 @@ public class Path {
      * @deprecated Need to be implemented.
      */
     public double getMinimumTravelTime() {
+        int minT = 0;
+        for(Arc ark : this.arcs){
+            minT += ark.getMinimumTravelTime();
+        }
         // TODO:
-        return 0;
+        return minT;
     }
 
 }
