@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 /**
  * Implements a binary heap containing elements of type E.
- *
  * Note that all comparisons are based on the compareTo method, hence E must
  * implement Comparable
  * 
@@ -80,7 +79,6 @@ public class BinaryHeap<E extends Comparable<E>> implements PriorityQueue<E> {
             E moving_val = this.array.get(indexParent(index));
             this.arraySet(index, moving_val);
         }
-
         this.arraySet(index, x);
     }
 
@@ -137,13 +135,19 @@ public class BinaryHeap<E extends Comparable<E>> implements PriorityQueue<E> {
 
     @Override
     public void remove(E x) throws ElementNotFoundException {
-        // TODO:
-        int index = this.array.indexOf(x);
-        if (index == -1){
+        int index = -1;
+        for (int i = 0; i < this.currentSize; i++) {
+            if (this.array.get(i).equals(x)) {
+                index = i;
+                break;
+            }
+        }
+        if (index == -1) {
             throw new ElementNotFoundException(x);
-        } 
-        ArrayList<E> newArray = new ArrayList<>();
-        
+        }
+        E lastItem = this.array.get(--this.currentSize);        this.arraySet(index, lastItem);
+        this.percolateDown(index);
+        this.percolateUp(index);
     }
 
     @Override

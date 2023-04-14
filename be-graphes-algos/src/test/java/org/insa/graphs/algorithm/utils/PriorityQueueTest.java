@@ -295,6 +295,13 @@ public abstract class PriorityQueueTest {
             // Check that the copy is now empty, and that both list contains all
             // elements.
             assertTrue(copyTree.isEmpty());
+
+
+
+
+
+
+
             assertEquals(remains_in, remains_cp);
 
             // Check that the size of the original tree is correct.
