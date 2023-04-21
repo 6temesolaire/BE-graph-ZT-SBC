@@ -20,42 +20,43 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
     protected ShortestPathSolution doRun() {
         final ShortestPathData data = getInputData();
         Graph graph = data.getGraph();
-        final int nbNodes = graph.size();
-        BinaryHeap<Label> tas = new BinaryHeap<Label>();
+
+        BinaryHeap<Label> tas = new BinaryHeap<>();
         notifyOriginProcessed(data.getOrigin());
-        boolean found = false;
-        ArrayList<Label> labels = new ArrayList<Label>();
+        Label[] labels = new Label[graph.size()];
+        // Creation d'un label pour tout les sommets du graph
         for (Node sommet: graph.getNodes()){
             Label label= new Label(sommet);
-            if (label.equals(data.getOrigin())) {
+            if (label.getSommet_courant().equals(data.getOrigin())) {
                 label.setCost(0);
                 tas.insert(label);
             }
-            labels.add(label);
+            labels[sommet.getId()] = label;
         }
+        // Liste des predecesseurs
         ArrayList<Arc> predecessorArcs = new ArrayList<>();
-
         Label min = tas.deleteMin();
         while (min.getSommet_courant() != data.getDestination()){
             min.setMarque(true);
+            notifyNodeReached(min.getSommet_courant());
             for (Arc successor : min.getSommet_courant().getSuccessors()){
-                for (Label label : labels){
-                    if (label.getSommet_courant().equals(successor.getOrigin())){
-                        if (!label.getMarque()){
-                            double costforcomparison = label.getCost();
-                            label.setCost(Math.min(label.getCost(), min.getCost()+ successor.getLength()));
-                            if (costforcomparison!=label.getCost()){
-                                tas.insert(label);
-                                label.setPere(successor);
-                            }
-                        }
+                // Small test to check allowed roads...
+                if (!data.isAllowed(successor)) {
+                    continue;
+                }
+                Label label = labels[successor.getDestination().getId()];
+                if (!label.getMarque()){
+                    double costForComparison = label.getCost();
+                    label.setCost(Math.min(label.getCost(), min.getCost() + successor.getLength()));
+                    if (costForComparison!=label.getCost()){
+                        tas.insert(label);
+                        label.setPere(successor);
                     }
                 }
             }
             min = tas.deleteMin();
-            predecessorArcs.add(min.getPere());
         }
-        Collections.reverse(predecessorArcs);
+        notifyDestinationReached(data.getDestination());
         ShortestPathSolution solution = new ShortestPathSolution(data, Status.OPTIMAL, new Path(graph, predecessorArcs));;
         return solution;
     }
