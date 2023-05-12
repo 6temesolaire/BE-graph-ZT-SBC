@@ -54,6 +54,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
                     label.setCost(Math.min(label.getCost(), min.getCost() + data.getCost(successor)));
                     if (costForComparison!=label.getCost()){
                         label.setPere(successor);
+                        // update tas si le label est deja dedans sinon l'insere
                         try {
                             tas.remove(label);
                         } catch (Exception e){
@@ -63,27 +64,25 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
                     }
                 }
             }
+            // Si le tas est vide alors il n'y a pas de chemin
             try {
                 min = tas.deleteMin();
             } catch (Exception e){
                 return new ShortestPathSolution(data, Status.INFEASIBLE);
             }
         }
-        // Si le sommet courant est la destination construire le chemin
-        if (min.getSommet_courant() == data.getDestination()){
-            min.setMarque(true);
-            Node sommet_courant = min.getSommet_courant();
-            notifyNodeMarked(sommet_courant);
-            notifyDestinationReached(sommet_courant);
-            while (sommet_courant != data.getOrigin()){
-                predecessorArcs.add(min.getPere());
-                sommet_courant = min.getPere().getOrigin();
-                min = labels[sommet_courant.getId()];
-            }
-            Collections.reverse(predecessorArcs);
-        } else {
-            return new ShortestPathSolution(data, Status.INFEASIBLE);
+        // Destination atteinte, construction du chemin
+        min.setMarque(true);
+        Node sommet_courant = min.getSommet_courant();
+        notifyNodeMarked(sommet_courant);
+        notifyDestinationReached(sommet_courant);
+        while (sommet_courant != data.getOrigin()){
+            predecessorArcs.add(min.getPere());
+            sommet_courant = min.getPere().getOrigin();
+            min = labels[sommet_courant.getId()];
         }
+        Collections.reverse(predecessorArcs);
+
         notifyDestinationReached(data.getDestination());
         ShortestPathSolution solution = new ShortestPathSolution(data, Status.OPTIMAL, new Path(graph, predecessorArcs));;
         return solution;
