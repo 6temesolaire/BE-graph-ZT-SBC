@@ -24,7 +24,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         BinaryHeap<Label> tas = new BinaryHeap<>();
         notifyOriginProcessed(data.getOrigin());
         Label[] labels = new Label[graph.size()];
-        // Creation d'un label pour tout les sommets du graph
+        // Creation d'un label pour tous les sommets du graph
         for (Node sommet: graph.getNodes()){
             Label label= new Label(sommet);
             if (label.getSommet_courant().equals(data.getOrigin())) {
