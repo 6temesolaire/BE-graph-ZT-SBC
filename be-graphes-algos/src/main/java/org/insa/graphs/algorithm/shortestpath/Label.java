@@ -28,6 +28,10 @@ public class Label implements Comparable<Label> {
         return this.coutRealise;
     }
 
+    public double getTotalCost() {
+        return this.coutRealise;
+    }
+
     public Arc getPere() {
         return this.pere;
     }
@@ -45,6 +49,6 @@ public class Label implements Comparable<Label> {
     }
 
     public int compareTo(Label other) {
-        return Double.compare(this.coutRealise, other.coutRealise);
+        return Double.compare(this.getTotalCost(), other.getTotalCost());
     }
 }

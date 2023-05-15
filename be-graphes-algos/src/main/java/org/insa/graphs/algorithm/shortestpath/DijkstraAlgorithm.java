@@ -26,7 +26,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         Label[] labels = new Label[graph.size()];
         // Creation d'un label pour tous les sommets du graph
         for (Node sommet: graph.getNodes()){
-            Label label= new Label(sommet);
+            Label label= this.createLabel(sommet, data.getDestination());
             if (label.getSommet_courant().equals(data.getOrigin())) {
                 label.setCost(0);
                 tas.insert(label);
@@ -36,9 +36,14 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         // Liste des predecesseurs
         ArrayList<Arc> predecessorArcs = new ArrayList<>();
         Label min = tas.deleteMin();
-
+        double coutPrecedent = 0;
         // Tant que le sommet courant n'est pas la destination
         while (min.getSommet_courant() != data.getDestination()){
+            if (min.getCost() < coutPrecedent){
+                System.out.println("--------------------------------------------------Erreur ----------------------------------------------");
+            }
+            System.out.println(min.getCost());
+            coutPrecedent = min.getCost();
             min.setMarque(true);
             notifyNodeMarked(min.getSommet_courant());
 
@@ -54,7 +59,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
                     label.setCost(Math.min(label.getCost(), min.getCost() + data.getCost(successor)));
                     if (costForComparison!=label.getCost()){
                         label.setPere(successor);
-                        // update tas si le label est deja dedans sinon l'insere
+                        // update tas si le label est deja dedans sinon l'insère
                         try {
                             tas.remove(label);
                         } catch (Exception e){
@@ -87,5 +92,8 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         ShortestPathSolution solution = new ShortestPathSolution(data, Status.OPTIMAL, new Path(graph, predecessorArcs));;
         return solution;
     }
-
+     
+    public Label createLabel (Node sommet, Node destination){
+        return new Label(sommet);
+    }
 }
