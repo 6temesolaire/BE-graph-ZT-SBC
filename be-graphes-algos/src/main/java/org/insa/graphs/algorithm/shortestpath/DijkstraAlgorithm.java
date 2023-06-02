@@ -1,5 +1,6 @@
 package org.insa.graphs.algorithm.shortestpath;
 
+import org.insa.graphs.algorithm.AbstractInputData;
 import org.insa.graphs.algorithm.AbstractSolution.Status;
 import org.insa.graphs.algorithm.utils.BinaryHeap;
 import org.insa.graphs.model.Arc;
@@ -24,24 +25,22 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         BinaryHeap<Label> tas = new BinaryHeap<>();
         notifyOriginProcessed(data.getOrigin());
         Label[] labels = new Label[graph.size()];
-        // Creation d'un label pour tous les sommets du graph
+        // INITITALISATION : Creation d'un label pour tous les sommets du graph
         for (Node sommet: graph.getNodes()){
-            Label label= this.createLabel(sommet, data.getDestination());
+            Label label= this.createLabel(sommet, data.getDestination(), data.getMode());
+            // Traitement de l'origine
             if (label.getSommet_courant().equals(data.getOrigin())) {
                 label.setCost(0);
                 tas.insert(label);
             }
             labels[sommet.getId()] = label;
         }
-        // Liste des predecesseurs
+        // Liste des prédécesseurs
         ArrayList<Arc> predecessorArcs = new ArrayList<>();
         Label min = tas.deleteMin();
         double coutPrecedent = 0;
-        // Tant que le sommet courant n'est pas la destination
+        // ITERATION : Tant que le sommet courant n'est pas la destination
         while (min.getSommet_courant() != data.getDestination()){
-            if (min.getCost() < coutPrecedent){
-                System.out.println("--------------------------------------------------Erreur ----------------------------------------------");
-            }
             System.out.println(min.getCost());
             coutPrecedent = min.getCost();
             min.setMarque(true);
@@ -52,9 +51,10 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
                 if (!data.isAllowed(successor)) {
                     continue;
                 }
-                notifyNodeReached(successor.getDestination());
+
                 Label label = labels[successor.getDestination().getId()];
                 if (!label.getMarque()){
+                    notifyNodeReached(successor.getDestination());
                     double costForComparison = label.getCost();
                     label.setCost(Math.min(label.getCost(), min.getCost() + data.getCost(successor)));
                     if (costForComparison!=label.getCost()){
@@ -81,19 +81,18 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         Node sommet_courant = min.getSommet_courant();
         notifyNodeMarked(sommet_courant);
         notifyDestinationReached(sommet_courant);
+        // Construction du chemin
         while (sommet_courant != data.getOrigin()){
             predecessorArcs.add(min.getPere());
             sommet_courant = min.getPere().getOrigin();
             min = labels[sommet_courant.getId()];
         }
         Collections.reverse(predecessorArcs);
-
-        notifyDestinationReached(data.getDestination());
         ShortestPathSolution solution = new ShortestPathSolution(data, Status.OPTIMAL, new Path(graph, predecessorArcs));;
         return solution;
     }
      
-    public Label createLabel (Node sommet, Node destination){
+    public Label createLabel (Node sommet, Node destination, AbstractInputData.Mode mode){
         return new Label(sommet);
     }
 }
